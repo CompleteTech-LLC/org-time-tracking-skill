@@ -57,6 +57,7 @@ Relay this table to the operator, in chat, before the first collection, and agai
 | Parameter (config path) | Meaning | Default / template value |
 |---|---|---|
 | `org.name`, `org.domain` | label and email domain | ask |
+| `org.logo` | optional client logo: a local image file (png, jpg, gif, webp; svg in the report only), shown beside the brand mark in the workbook banner and the report header | none |
 | `tree_root`, `output_xlsx` | where the tree and workbook live | ask |
 | `period.start`, `period.end`, `period.timezone` | inclusive date range and the operator's zone | ask |
 | `me.teams_names`, `me.mail_markers`, `me.draft_prefix`, `me.calendar_subject_prefixes` | how to tell my Teams posts, mail I wrote or drafted, and calendar items I organized | ask |

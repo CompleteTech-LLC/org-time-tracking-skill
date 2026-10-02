@@ -116,3 +116,23 @@ def readable_on(colour: str, background: str, ratio: float = 4.5) -> str:
         if contrast(out, background) >= ratio:
             return out
     return out
+
+
+LOGO_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
+MAX_LOGO_BYTES = 2 * 1024 * 1024
+
+
+def client_logo(org_cfg: dict | None, config_dir: str = ".") -> str:
+    """Absolute path of the client's logo (config `org.logo`), or "" when none is set.
+
+    The client's mark belongs to the client: it must be a local file the operator is allowed to use. Remote and
+    data-URI logos are rejected, only common image types are accepted, and the file is capped at 2 MB.
+    """
+    logo = (org_cfg or {}).get("logo", "")
+    path = _logo_path(logo, config_dir)
+    if path:
+        if os.path.splitext(path)[1].lower() not in LOGO_SUFFIXES:
+            raise SystemExit(f"org.logo must be one of {sorted(LOGO_SUFFIXES)}, got {os.path.basename(path)}")
+        if os.path.getsize(path) > MAX_LOGO_BYTES:
+            raise SystemExit("org.logo is larger than 2 MB: use a smaller image")
+    return path

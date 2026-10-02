@@ -78,6 +78,7 @@ S_LIKELY = LBL.get("likely_not_held", "Likely not held (chat)")
 S_DEFAULT = LBL.get("scheduled", "Scheduled, no record")
 RULE = get("meetings", "held_rule", default="teams_conversation_same_day")  # or "none" (trust the calendar)
 STY = CFG.get("style", {})
+CLIENT_LOGO = _brand.client_logo(CFG.get("org"), BASE_DIR)  # optional client mark (org.logo)
 BR = _brand.resolve(CFG.get("branding"), BASE_DIR)  # neutral unless a preset / explicit values are chosen
 F = STY.get("font") or BR.get("font") or "Arial"
 HDR_COLOR = BR["accent"].lstrip("#")  # table headers, tab colour, banner
@@ -868,17 +869,19 @@ ws0["A2"] = f"{ORG} time tracking, {START:%Y-%m-%d} to {END:%Y-%m-%d}"
 ws0["A2"].font = Font(name=F, size=14, bold=True)
 ws0["A3"] = BR.get("tagline") or "Billable time from Outlook, Teams and calendar evidence. Tab guide in column C."
 ws0["A3"].font = Font(name=F, size=10, italic=True, color=BR["light"]["ink-3"].lstrip("#"))
-if BR.get("logo_path"):
+_col = 4
+for _logo in [p for p in (BR.get("logo_path"), CLIENT_LOGO) if p]:  # brand mark first, then the client's mark
     try:
         from openpyxl.drawing.image import Image as _XLImage
 
-        _img = _XLImage(BR["logo_path"])
+        _img = _XLImage(_logo)
         _ratio = _img.height / _img.width if _img.width else 1
-        _img.width = 150
-        _img.height = int(150 * _ratio)
-        ws0.add_image(_img, "D1")
-    except Exception as exc:  # Pillow missing or unreadable image: the workbook is still valid without the logo
-        print("logo not embedded:", exc, file=sys.stderr)
+        _img.height = 56
+        _img.width = max(1, int(56 / _ratio))
+        ws0.add_image(_img, f"{get_column_letter(_col)}1")
+        _col += _img.width // 64 + 2
+    except Exception as exc:  # Pillow missing, SVG or unreadable image: the workbook is still valid without the logo
+        print("logo not embedded:", os.path.basename(_logo), exc, file=sys.stderr)
 S0 = 6
 for _c, _h in enumerate(("Metric", "Value", "Where to look"), 1):
     _x = ws0.cell(row=S0 - 1, column=_c, value=_h)

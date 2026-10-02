@@ -188,6 +188,39 @@ def main() -> int:
           "neutral report: no company identity; theme override applied")
     check("prefers-color-scheme:dark" in page and "Held (conversation that day)" in page and "Not held" in page, "light/dark tokens and meeting data embedded")
 
+    # client logo (org.logo): optional, local only, shown beside the brand mark, independent of the brand identity
+    import struct
+    import zlib
+
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+
+    png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(b"\0\xcc\x33\x33")) + chunk(b"IEND", b"")
+    (OUT / "client-logo.png").write_bytes(png)
+    for name, base_cfg in (("neutral", neutral), ("brand", cthc)):
+        cfg = {**base_cfg, "org": {**base_cfg["org"], "logo": "client-logo.png"}, "output_xlsx": f"./{name}_client.xlsx"}
+        (OUT / f"{name}_client.json").write_text(json.dumps(cfg), encoding="utf-8")
+        run(str(ROOT / "scripts/make_workbook.py"), "--config", f"{name}_client.json")
+        stub_cfg = {**cfg, "output_xlsx": "./stub.xlsx"}
+        (OUT / f"{name}_client_report.json").write_text(json.dumps(stub_cfg), encoding="utf-8")
+        run(str(ROOT / "scripts/build_report.py"), "--config", f"{name}_client_report.json", "--out", f"{name}_client.html")
+        html_text = (OUT / f"{name}_client.html").read_text(encoding="utf-8")
+        expected_images = 2 if name == "brand" else 1
+        check(html_text.count("<img ") == expected_images and 'class="client"' in html_text, f"{name}: client logo shown in the report header ({expected_images} image(s))")
+    try:
+        import PIL  # noqa: F401
+
+        check(len(load_workbook(OUT / "neutral_client.xlsx")["Summary"]._images) == 1, "neutral workbook carries only the client logo")
+        check(len(load_workbook(OUT / "brand_client.xlsx")["Summary"]._images) == 2, "branded workbook carries the brand logo and the client logo")
+    except ImportError:
+        print("skip: Pillow not installed, workbook client logo not checked")
+    for bad_logo in ("https://example.com/logo.png", "data:image/png;base64,AAAA", "missing-logo.png", "client-logo.txt"):
+        (OUT / "client-logo.txt").write_text("not an image", encoding="utf-8")
+        cfg = {**neutral, "org": {**neutral["org"], "logo": bad_logo}}
+        (OUT / "bad_client.json").write_text(json.dumps(cfg), encoding="utf-8")
+        result = subprocess.run([PY, str(ROOT / "scripts/make_workbook.py"), "--config", "bad_client.json"], cwd=OUT, capture_output=True, text=True)
+        check(result.returncode != 0, f"unsafe or invalid client logo is rejected: {bad_logo[:30]}")
+
     for bad in ({"preset": "no-such-brand"}, {"preset": "neutral", "accent": "blue"}, {"preset": "neutral", "logo": "https://example.com/x.png"}):
         (OUT / "bad.json").write_text(json.dumps(config("bad", bad)), encoding="utf-8")
         result = subprocess.run([PY, str(ROOT / "scripts/make_workbook.py"), "--config", "bad.json"], cwd=OUT, capture_output=True, text=True)

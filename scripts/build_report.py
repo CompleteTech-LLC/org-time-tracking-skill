@@ -73,7 +73,7 @@ def css(brand: dict, accent_on: str) -> str:
         f"*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 '{esc(font)}',system-ui,sans-serif}}"
         "main{max-width:1080px;margin:0 auto;padding:24px 16px 48px}"
         "header.brand{display:flex;gap:16px;align-items:center;padding:20px 0;border-bottom:3px solid var(--accent);margin-bottom:16px}"
-        "header.brand img{height:56px;width:auto}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:700;color:var(--accent-text)}"
+        "header.brand img{height:56px;width:auto}header.brand img.client{margin-left:auto;padding:6px;box-sizing:content-box;background:#fff;border-radius:8px;max-width:220px;object-fit:contain}.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:700;color:var(--accent-text)}"
         "h1{margin:2px 0;font-size:26px}.tagline{color:var(--ink-3);margin:0}h2{margin:32px 0 10px;font-size:18px;color:var(--ink-2)}"
         "h3{margin:20px 0 8px;font-size:15px;color:var(--ink-2)}"
         ".filters{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);"
@@ -281,6 +281,14 @@ def build(cfg: dict, workbook: str, theme: str, config_dir: str) -> str:
             blob = base64.b64encode(handle.read()).decode("ascii")
         logo = f'<img src="data:{mime};base64,{blob}" alt="{esc(brand.get("name") or "logo")} logo">'
 
+    client = ""
+    client_path = brandlib.client_logo(cfg.get("org"), config_dir)
+    if client_path:
+        mime = mimetypes.guess_type(client_path)[0] or "image/png"
+        with open(client_path, "rb") as handle:
+            blob = base64.b64encode(handle.read()).decode("ascii")
+        client = f'<img class="client" src="data:{mime};base64,{blob}" alt="{esc(org)} logo">'
+
     # JSON for a <script> block: neutralize anything that could close the tag or start an HTML comment
     payload = json.dumps(data, separators=(",", ":"), default=str).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     script = SCRIPT.replace("__DATA__", payload)
@@ -297,7 +305,7 @@ def build(cfg: dict, workbook: str, theme: str, config_dir: str) -> str:
         f"<title>{esc(org)} time tracking report</title><style>{css(brand, accent_on)}</style></head><body><main>",
         '<header class="brand">' + logo + "<div>" + (f'<div class="eyebrow">{esc(brand["eyebrow"])}</div>' if brand.get("eyebrow") else "")
         + f'<h1>{esc(org)} time tracking</h1><p class="tagline">{esc(brand.get("tagline") or "")}'
-        + f" {esc(period.get('start', ''))} to {esc(period.get('end', ''))}</p></div></header>",
+        + f" {esc(period.get('start', ''))} to {esc(period.get('end', ''))}</p></div>" + client + "</header>",
         '<form class="filters" id="filters" hidden onsubmit="return false">'
         '<label>From<select id="from"></select></label><label>To<select id="to"></select></label>'
         '<label>Quick range<select id="month"></select></label><button type="button" id="reset">Reset</button>'

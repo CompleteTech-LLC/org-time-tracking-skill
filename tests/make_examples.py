@@ -20,6 +20,25 @@ ROOT = fx.ROOT
 OUT = fx.OUT
 
 
+def make_fictional_client_logo(path: Path) -> None:
+    """A fictional wordmark for the fictional Northwind client (needs Pillow); real client logos are supplied by the operator."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("RGBA", (360, 96), (255, 255, 255, 0))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((2, 2, 94, 94), radius=18, fill=(15, 118, 110, 255))
+    draw.polygon([(24, 70), (47, 24), (70, 70), (58, 70), (47, 46), (36, 70)], fill=(255, 255, 255, 255))
+    try:
+        font = ImageFont.truetype("arialbd.ttf", 38)
+        small = ImageFont.truetype("arial.ttf", 16)
+    except OSError:
+        font = small = ImageFont.load_default()
+    draw.text((112, 18), "NORTHWIND", fill=(15, 59, 56, 255), font=font)
+    draw.text((114, 64), "Trading Co. (fictional)", fill=(71, 85, 105, 255), font=small)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path)
+
+
 def main() -> int:
     shutil.rmtree(OUT, ignore_errors=True)
     OUT.mkdir(parents=True)
@@ -27,7 +46,12 @@ def main() -> int:
     (OUT / "meetings.json").write_text(json.dumps(fx.MEETINGS), encoding="utf-8")
     (OUT / "tasks.json").write_text(json.dumps(fx.TASKS), encoding="utf-8")
     fx.run(str(ROOT / "scripts/build_tree.py"), "--in", "lines.txt", "--out", "tree", "--start", "2026-07-01", "--tz", "America/New_York")
-    (OUT / "example.json").write_text(json.dumps(fx.config("example", {"preset": "completetech"})), encoding="utf-8")
+    client_logo = ROOT / "assets" / "examples" / "northwind-logo.png"
+    if not client_logo.exists():
+        make_fictional_client_logo(client_logo)
+    cfg = fx.config("example", {"preset": "completetech"})
+    cfg["org"]["logo"] = str(client_logo)
+    (OUT / "example.json").write_text(json.dumps(cfg), encoding="utf-8")
     print(fx.run(str(ROOT / "scripts/make_workbook.py"), "--config", "example.json").strip())
     powershell = shutil.which("powershell") or shutil.which("pwsh")
     if not powershell:

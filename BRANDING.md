@@ -14,6 +14,10 @@ Select an identity in `config.json`:
 
 or give explicit values (`name`, `eyebrow`, `tagline`, `contact`, `logo`, `accent`, `footer`, `font`, `light{}`, `dark{}`); explicit values override the preset. Presets live in `templates/branding.<preset>.json`. Use the existing local `assets/logo.png` for authorized CompleteTech output. Do not synthesize replacement marks, fetch remote artwork, redistribute fonts, or transfer private seals and signatures to public repositories. The MIT code license does not replace the asset policy. A logo must be a local file; remote and data-URI logos are rejected.
 
+## Client logo
+
+`org.logo` in `config.json` adds the client's own mark beside the brand mark: in the workbook banner and at the right of the report header (on a white tile, so a dark logo stays legible in dark mode). The client's mark belongs to the client. Use it only with the client's permission, supply a local file (remote and data-URI logos are rejected, files over 2 MB are refused), and keep it out of Git and out of the registry bundle: the repository's ignore files exclude `logos/`, `client-logo.*` and `*-client-logo.*`. It is separate from the brand identity, so a neutral report can still carry a client logo. SVG renders in the report but not in the workbook.
+
 ## Starter palette
 
 These established library colors are a reference for the `completetech` preset:

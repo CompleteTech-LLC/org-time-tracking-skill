@@ -1,5 +1,5 @@
 {
-  "org": { "name": "Acme", "domain": "acme.com" },
+  "org": { "name": "Acme", "domain": "acme.com", "logo": "" },
   "tree_root": "./acme",
   "output_xlsx": "./acme_communications.xlsx",
   "period": { "start": "2026-07-01", "end": "2026-09-30", "timezone": "America/New_York" },

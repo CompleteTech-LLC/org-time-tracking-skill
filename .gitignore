@@ -35,3 +35,8 @@ tasks.json
 !assets/examples/example.xlsx
 tests/out/
 tests/fixtures/
+
+# Client logos belong to the client: keep them local, never commit or bundle them
+logos/
+client-logo.*
+*-client-logo.*
