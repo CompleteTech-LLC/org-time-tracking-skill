@@ -1,0 +1,37 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+venv/
+.env
+.env.*
+!/.env.example
+
+# Shared skill layout ignores
+*$py.class
+Thumbs.db
+desktop.ini
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+env/
+ENV/
+!.env.example
+secrets.json
+*_secret.ini
+*_local.ini
+preview/
+output/
+*.tmp
+
+# Working directories and generated fixtures (real exports hold personal mail, chats and credentials: never commit them)
+exports/
+trees/
+lines.txt
+config.json
+meetings.json
+tasks.json
+*.xlsx
+!assets/examples/example.xlsx
+tests/out/
+tests/fixtures/

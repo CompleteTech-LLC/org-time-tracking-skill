@@ -1,0 +1,31 @@
+{
+  "_comment": "Neutral default. Used unless the operator selects an approved identity (the CompleteTech preset or their own values). No logo, no company name, no tagline.",
+  "name": "",
+  "eyebrow": "",
+  "tagline": "",
+  "contact": "",
+  "logo": "",
+  "accent": "#1F3864",
+  "footer": "",
+  "font": "Arial",
+  "light": {
+    "bg": "#F7F9FC",
+    "surface": "#FFFFFF",
+    "surface-2": "#EEF1F6",
+    "ink": "#111827",
+    "ink-2": "#1F2937",
+    "ink-3": "#6B7280",
+    "line": "#E5E7EB",
+    "line-2": "#D1D5DB"
+  },
+  "dark": {
+    "bg": "#0E1116",
+    "surface": "#161B22",
+    "surface-2": "#1F262F",
+    "ink": "#F3F4F6",
+    "ink-2": "#D1D5DB",
+    "ink-3": "#9CA3AF",
+    "line": "#2D333B",
+    "line-2": "#3D444D"
+  }
+}

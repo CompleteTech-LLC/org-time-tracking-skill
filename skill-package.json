@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "family": "completetech-skills",
+  "repository": "CompleteTech-LLC/org-comms-export-skill",
+  "skill_name": "org-comms-export",
+  "kind": "config-generator",
+  "entrypoints": ["scripts/build_tree.py", "scripts/make_workbook.py", "scripts/build_report.py"],
+  "example_inputs": ["templates/config.example.json", "templates/meetings.example.json", "templates/tasks.example.json", "templates/branding.completetech.json"],
+  "network_mode": "local",
+  "private": true
+}

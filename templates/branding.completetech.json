@@ -1,0 +1,31 @@
+{
+  "_comment": "CompleteTech LLC library preset. Use only for authorized CompleteTech output; an approved engagement brand takes precedence. logo is the local assets/logo.png shipped with this repository (never fetched, never synthesized).",
+  "name": "CompleteTech",
+  "eyebrow": "COMPLETETECH LLC",
+  "tagline": "Innovation at Every Integration",
+  "contact": "complete.tech",
+  "logo": "assets/logo.png",
+  "accent": "#1E3A8A",
+  "footer": "CompleteTech LLC · Innovation at Every Integration · complete.tech",
+  "font": "Arial",
+  "light": {
+    "bg": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "surface-2": "#EEF2FF",
+    "ink": "#0F172A",
+    "ink-2": "#1E293B",
+    "ink-3": "#64748B",
+    "line": "#E2E8F0",
+    "line-2": "#CBD5E1"
+  },
+  "dark": {
+    "bg": "#0F172A",
+    "surface": "#1E293B",
+    "surface-2": "#273449",
+    "ink": "#F1F5F9",
+    "ink-2": "#CBD5E1",
+    "ink-3": "#94A3B8",
+    "line": "#334155",
+    "line-2": "#475569"
+  }
+}

@@ -1,0 +1,8 @@
+# Tree builder (scripts/build_tree.py) is standard-library Python 3.8+.
+# Workbook builder (scripts/make_workbook.py) and HTML report (scripts/build_report.py):
+openpyxl==3.1.5
+# Optional: embed the brand logo in the workbook banner (openpyxl needs Pillow to read PNGs)
+pillow==12.2.0
+# Quality validation (scripts/validate_quality.py) needs:
+pyyaml==6.0.3
+ruff==0.14.0

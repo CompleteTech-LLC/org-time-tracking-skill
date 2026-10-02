@@ -1,0 +1,8 @@
+[
+  { "task": "Fix tickets that re-open after closing", "source": "Teams: chat with Sam", "requested_by": "Sam",
+    "raised": "2026-07-01", "status": "Done (07-07)", "low_h": 2, "high_h": 4,
+    "basis": "Notification mail re-triggers the ticket; several instances", "evidence": "Requested" },
+  { "task": "Reduce alert noise", "source": "Email alerts", "requested_by": "-",
+    "raised": "2026-09-30", "status": "Suggested, not requested", "low_h": 1, "high_h": 2,
+    "basis": "Mail rules / thresholds", "evidence": "Suggested" }
+]

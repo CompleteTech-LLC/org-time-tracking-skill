@@ -1,0 +1,7 @@
+interface:
+  display_name: "Org Comms Export Skill"
+  short_description: "Export one organization's Outlook, Teams and calendar activity into a tree, a time workbook and a branded report"
+  default_prompt: "Use $org-comms-export: before the first collection relay the SKILL.md Before You Start table (this skill reads the operator's own signed-in Outlook mail, Teams chats and calendar through a browser session, writes redacted Markdown, a workbook and an HTML report to a folder the operator chooses, transmits nothing, and treats meeting attendance, billing parameters and branding as operator decisions); ask me for the organization domain, period, time zone, my names, billing rules (minimum per lapse, increment, meeting-day minimum, held-meeting rule) and branding (neutral unless I choose the CompleteTech preset or give my own); then collect mail, chats and meetings, build the tree, the workbook and the report, recalculate and verify, and list borderline cases for my decision."
+
+policy:
+  allow_implicit_invocation: false

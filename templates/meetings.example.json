@@ -1,0 +1,13 @@
+[
+  { "title": "Weekly sync", "group": "work", "start": "13:00", "end": "14:00",
+    "dates": ["2026-07-01", "2026-07-08", "2026-07-15"],
+    "evidence": "Outlook calendar (recurring)" },
+  { "title": "Weekly sync", "group": "work", "start": "13:00", "end": "14:00",
+    "dates": ["2026-07-22"], "status": "Cancelled",
+    "evidence": "'Meeting canceled' email 07-21" },
+  { "title": "Weekly sync", "group": "work", "start": "16:00", "end": "17:00",
+    "dates": ["2026-07-29"], "actual_min": 42,
+    "evidence": "Calendar exception; Teams: ended 4:42 PM after 42m 17s" },
+  { "title": "Gym block", "group": "unconfirmed", "start": "17:00", "end": "18:00",
+    "dates": ["2026-07-02", "2026-07-09"], "evidence": "Outlook calendar (recurring)" }
+]

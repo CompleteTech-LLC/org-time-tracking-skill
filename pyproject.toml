@@ -1,0 +1,22 @@
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+exclude = [
+  ".git",
+  ".venv",
+  "venv",
+  "env",
+  "ENV",
+  "output",
+  "preview",
+  "scans",
+  "compiled",
+  "reports",
+  "exports",
+  "trees",
+  "tests/fixtures",
+  "tests/out",
+]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

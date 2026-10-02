@@ -1,0 +1,49 @@
+{
+  "org": { "name": "Acme", "domain": "acme.com" },
+  "tree_root": "./acme",
+  "output_xlsx": "./acme_communications.xlsx",
+  "period": { "start": "2026-07-01", "end": "2026-09-30", "timezone": "America/New_York" },
+  "me": {
+    "teams_names": ["Pat"],
+    "mail_markers": ["Pat Example"],
+    "draft_prefix": "[Draft]",
+    "calendar_subject_prefixes": ["Meeting"]
+  },
+  "alerts": { "sender_label": "noreply@acme.com" },
+  "billing": {
+    "min_lapse_min": 15,
+    "increment_min": 15,
+    "email_actual_min": 5,
+    "session_gap_min": 20,
+    "session_padding_min": 2,
+    "meeting_day_min": 240,
+    "meeting_basis": "Logged",
+    "include_unconfirmed": "No"
+  },
+  "meetings": {
+    "work_group_label": "Acme work",
+    "unconfirmed_group_label": "Unconfirmed (personal?)",
+    "held_rule": "teams_conversation_same_day",
+    "labels": {
+      "held_card": "Held (Teams record + conversation)",
+      "held_conversation": "Held (conversation that day)",
+      "not_held": "Not held (no conversation that day)",
+      "cancelled": "Cancelled",
+      "likely_not_held": "Likely not held (chat)",
+      "scheduled": "Scheduled, no record"
+    }
+  },
+  "meetings_file": "meetings.json",
+  "tasks_file": "tasks.json",
+  "branding": {
+    "preset": "neutral",
+    "_comment": "Neutral unless an approved identity is chosen: \"completetech\" for authorized CompleteTech output, or your own values (name, eyebrow, tagline, contact, logo (local file), accent, footer, font, light{}, dark{}). Explicit values override the preset."
+  },
+  "style": {
+    "font": "",
+    "input_color": "FFFF00",
+    "calendar_color_scale": { "mid_min": 60, "max_min": 240 },
+    "minute_unit": "m",
+    "theme": "auto"
+  }
+}
