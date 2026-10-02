@@ -1,22 +1,22 @@
-# Start here: org-comms-export
+# Start here: org-time-tracking
 
 <p align="center"><img src="assets/logo.png" alt="CompleteTech LLC logo" width="260"></p>
 
-**CompleteTech LLC Skills** — Communications evidence and time accounting.
+**CompleteTech LLC Skills** — Time tracking from communications evidence.
 
 [Overview](README.md) · [Agent instructions](SKILL.md) · [Branding and handoffs](BRANDING.md) · [Contributing](CONTRIBUTING.md)
 
 ## 1. Choose the right skill
 
-Use this skill to gather one organization's Outlook mail, Teams chats and calendar meetings, document them in a workbook with your own billing rules, and render a report. Its activation/install-directory key is **`org-comms-export`**; the repository is `org-comms-export-skill`. Install the whole skill directory, not only SKILL.md. Each agent product has its own discovery directory; use that product's documented installation mechanism.
+Use this skill to track and bill time spent with one organization: it reads your Outlook mail, Teams chats and calendar as evidence, computes billable time under your own rules (minimum per lapse, increment, meeting-day minimum), and shows it per day in a workbook, a calendar and a report. Its activation/install-directory key is **`org-time-tracking`**; the repository is `org-time-tracking-skill`. Install the whole skill directory, not only SKILL.md. Each agent product has its own discovery directory; use that product's documented installation mechanism.
 
 ## 2. Prepare a full checkout
 
 Python 3.12 is the shared CI baseline.
 
 ```bash
-git clone https://github.com/CompleteTech-LLC/org-comms-export-skill.git org-comms-export
-cd org-comms-export
+git clone https://github.com/CompleteTech-LLC/org-time-tracking-skill.git org-time-tracking
+cd org-time-tracking
 python3 -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
@@ -31,7 +31,7 @@ On Windows PowerShell, create the environment with `py -3 -m venv .venv` and use
 python tests/make_fixtures.py
 ```
 
-It should print `ALL OK`. The fixture is a fictional organization and synthetic people; it writes under `tests/out/` and touches no mailbox, chat or calendar. It builds a tree, two workbooks (neutral and CompleteTech branding) and two reports, and checks redaction, billing parameters, the held-meeting rule and branding. Open the files under `tests/out/` and inspect the layout.
+It should print `ALL OK`. The fixture is a fictional organization and synthetic people; it writes under `tests/out/` and touches no mailbox, chat or calendar. It builds an evidence tree, two time-tracking workbooks (neutral and CompleteTech branding) and two reports, and checks redaction, billing parameters, the held-meeting rule and branding. Open the files under `tests/out/` and inspect the layout.
 
 ## 4. Start a real export separately
 

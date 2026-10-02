@@ -1,12 +1,12 @@
 ---
-name: org-comms-export
+name: org-time-tracking
 description: >-
-  Export one organization's Outlook-on-the-web mail, Teams-on-the-web chats and calendar meetings (from a start date on) into a month/day folder tree of Markdown files (staff, related, alerts, teams, meetings) with credentials redacted, and optionally document it in an Excel workbook (communications, Teams sessions and messages, meetings, tasks with effort estimates, time spent under operator-set billing rules, a daily calendar and event detail) plus a self-contained branded light/dark HTML report. Every organization, person, date, billing rule and brand value is a parameter; identity is neutral unless the operator chooses an approved one (the CompleteTech preset or their own). Disclosure: this skill reads the operator's own signed-in mailbox, chats and calendar through a browser session, writes redacted files and a workbook to a folder the operator chooses, and transmits nothing. Use when asked to gather, archive, organize, time-account or bill everything involving a company domain, for example "find all email, Teams and meetings with acme.com since July", "put it on a spreadsheet with my time", "show it on a calendar", or "make a report".
+  Track and account for the time spent with one organization from the evidence in Outlook-on-the-web mail, Teams-on-the-web chats and the calendar: an Excel time-tracking workbook (time spent under operator-set billing rules such as a minimum per lapse, a billing increment and a meeting-day minimum; a daily calendar and clickable event detail; tasks with effort estimates; meetings counted as held only when there was Teams conversation that day), backed by a redacted month/day evidence tree and a self-contained branded light/dark HTML report. Every organization, person, date, billing rule and brand value is a parameter; identity is neutral unless the operator chooses an approved one (the CompleteTech preset or their own). Disclosure: this skill reads the operator's own signed-in mailbox, chats and calendar through a browser session, writes redacted files and a workbook to a folder the operator chooses, and transmits nothing. Use when asked to track, tally, justify or bill time spent with a company ("how much time did I spend with acme.com since July", "put my time on a spreadsheet and a calendar", "apply my billing minimums", "show hours per day"), or to gather the supporting mail, Teams and meeting evidence.
 version: 1.0.0
 metadata:
   openclaw:
-    skillKey: org-comms-export
-    homepage: https://github.com/CompleteTech-LLC/org-comms-export-skill
+    skillKey: org-time-tracking
+    homepage: https://github.com/CompleteTech-LLC/org-time-tracking-skill
     requires:
       bins:
         - python3
@@ -17,14 +17,15 @@ metadata:
         package: pyyaml==6.0.3
 ---
 
-# Org Comms Export Skill
+# Org Time Tracking Skill
 
 ## Purpose
 
 | Use | Scope |
 |---|---|
-| Communications export | Pull one organization's mail, Teams chats and calendar meetings from a start date into a redacted folder tree, then a time-accounting workbook and a branded HTML report. |
-| Starting point | Any request to gather, archive, organize, time-account or bill everything involving a company domain, or to show it on a spreadsheet, calendar or report. |
+| Time tracking | Turn one organization's Outlook mail, Teams chats and calendar meetings, from a start date on, into billable time: sessions and meetings become lapses that are billed under the operator's own rules, shown per day on a calendar and traceable event by event. |
+| Evidence | The same pass produces a redacted month/day tree (the proof behind every number) and a branded report. Communications are the evidence, not the product. |
+| Starting point | Any request to track, tally, justify or bill time spent with a company domain, or to show hours on a spreadsheet, calendar or report. |
 | Operating boundary | Read-only over the operator's own signed-in Microsoft 365 web session. Nothing is sent, deleted or modified in the mailbox, and nothing is transmitted anywhere. Hours are estimates from evidence, not invoices, and attendance and billing parameters are the operator's decisions. |
 
 ## Before You Start
@@ -82,12 +83,12 @@ Resolve identity before rendering. An approved engagement brand takes precedence
 
 ## Workflow
 
-1. Confirm the parameters above and relay Before You Start. Ask whether meetings, a workbook and a report are wanted, and which identity to use.
-2. Collect Outlook mail, Teams chats and (optionally) calendar and meeting cards with the `scripts/*.js` collectors; mechanics in [references/browser-collection.md](references/browser-collection.md). Redact, write lines, run `python scripts/build_tree.py --in lines.txt --out <out>/<org> --start <start> --tz "<tz>"`. Line format: `YYYY-MM-DD|HH:MM|category|source|who|text`, where category is staff, related, alerts or teams, and `source` is the chat, the alert type, or "mail".
-3. Write `meetings.json`, `tasks.json` and `config.json`; rules in [references/meetings-and-billing.md](references/meetings-and-billing.md).
-4. `python scripts/make_workbook.py --config config.json`; then recalculate (`scripts/recalc_excel.ps1` or LibreOffice), check the Daily Time and Day Detail "ties" cells, and open the file for the operator. Tab and report details in [references/workbook.md](references/workbook.md).
-5. `python scripts/build_report.py --config config.json` for the branded HTML report (needs the recalculated workbook).
-6. Report to the operator (see the end of this file).
+1. **Set the rules.** Confirm the parameters above and relay Before You Start. Ask for the period, time zone, the billing rules (minimum per lapse, increment, meeting-day minimum, held-meeting rule), whether recurring unrelated items are personal, and which identity (brand) the output carries.
+2. **Gather the evidence.** Collect Outlook mail, Teams chats and (optionally) calendar and meeting cards with the `scripts/*.js` collectors; mechanics in [references/browser-collection.md](references/browser-collection.md). Redact, write lines, run `python scripts/build_tree.py --in lines.txt --out <out>/<org> --start <start> --tz "<tz>"`. Line format: `YYYY-MM-DD|HH:MM|category|source|who|text`, where category is staff, related, alerts or teams, and `source` is the chat, the alert type, or "mail".
+3. **Decide what counts.** Write `meetings.json` (series and dates; explicit status only where chat or mail proves a cancellation or postponement), `tasks.json` (effort estimates) and `config.json`; rules in [references/meetings-and-billing.md](references/meetings-and-billing.md).
+4. **Compute the time.** `python scripts/make_workbook.py --config config.json`; recalculate (`scripts/recalc_excel.ps1` or LibreOffice) and check the Daily Time and Day Detail "ties" cells. Tabs in [references/workbook.md](references/workbook.md): Time Spent, Calendar View, Daily Time and Day Detail come first; the evidence tabs follow.
+5. **Present it.** Open the workbook for the operator; `python scripts/build_report.py --config config.json` renders the branded HTML report (needs the recalculated workbook).
+6. **Report** (see the end of this file), including every borderline case that needs the operator's decision.
 
 ## Hard rules (learned the hard way)
 

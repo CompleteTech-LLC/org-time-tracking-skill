@@ -86,7 +86,7 @@ def stub_workbook(path: Path) -> None:
     s = wb.active
     s.title = "Summary"
     s["A5"], s["B5"] = "Metric", "Value"
-    for i, (k, v) in enumerate([("Email: staff", 1), ("Teams messages", 12), ("My time in communications (h), logged basis", 6.5)], 6):
+    for i, (k, v) in enumerate([("Email: staff", 1), ("Teams messages", 12), ("My billed time (h), logged basis", 6.5)], 6):
         s.cell(row=i, column=1, value=k)
         s.cell(row=i, column=2, value=v)
     t = wb.create_sheet("Time Spent")

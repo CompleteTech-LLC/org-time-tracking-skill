@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a self-contained, branded light/dark HTML report from a RECALCULATED org-comms-export workbook.
+"""Render a self-contained, branded light/dark time-tracking HTML report from a RECALCULATED org-time-tracking workbook.
 
 Usage:
   python build_report.py --config config.json [--workbook book.xlsx] [--out report.html] [--theme auto|light|dark]
@@ -117,22 +117,22 @@ def build(cfg: dict, workbook: str, theme: str, config_dir: str) -> str:
     out = [f'<!doctype html><html lang="en"{theme_attr}><head><meta charset="utf-8">',
            '<meta name="viewport" content="width=device-width,initial-scale=1">',
            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; img-src data:\">",
-           f"<title>{esc(org)} time and communications report</title><style>{css(brand, accent_on)}</style></head><body><main>"]
+           f"<title>{esc(org)} time tracking report</title><style>{css(brand, accent_on)}</style></head><body><main>"]
     out.append('<header class="brand">' + logo + "<div>" + (f'<div class="eyebrow">{esc(brand["eyebrow"])}</div>' if brand.get("eyebrow") else "")
-               + f"<h1>{esc(org)} communications and time</h1><p class=\"tagline\">{esc(brand.get('tagline') or '')}"
+               + f"<h1>{esc(org)} time tracking</h1><p class=\"tagline\">{esc(brand.get('tagline') or '')}"
                + f" {esc(period.get('start', ''))} to {esc(period.get('end', ''))}</p></div></header>")
 
     tiles = [m for m in metrics if m[1] is not None][:10]
     out.append('<section class="tiles">' + "".join(
         f'<div class="tile"><b>{esc(f"{v:.1f}" if isinstance(v, float) else v)}</b><span>{esc(k)}</span></div>' for k, v in tiles) + "</section>")
 
-    out.append("<h2>Where the time goes</h2><table><tr><th>Line item</th><th class=\"n\">Count</th><th class=\"n\">Minutes</th><th class=\"n\">h:mm</th></tr>")
+    out.append("<h2>Billed time</h2><table><tr><th>Line item</th><th class=\"n\">Count</th><th class=\"n\">Minutes</th><th class=\"n\">h:mm</th></tr>")
     for label, count, minutes in lines:
         if label:
             out.append(f'<tr><td>{esc(label)}</td><td class="n">{esc(count)}</td><td class="n">{esc(round(minutes or 0))}</td><td class="n">{hm(minutes)}</td></tr>')
     out.append("</table>")
 
-    out.append("<h2>Calendar</h2>")
+    out.append("<h2>Time per day</h2>")
     months = sorted({(d.year, d.month) for d in daily})
     for y, m in months:
         total = sum(v for d, v in daily.items() if (d.year, d.month) == (y, m))

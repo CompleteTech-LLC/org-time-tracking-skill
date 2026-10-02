@@ -1,11 +1,11 @@
 flowchart LR
-  A[Parameters and consent] --> B[Browser collection: mail, chats, calendar]
+  A[Billing rules and consent] --> B[Evidence: mail, chats, calendar]
   B --> C[Redact secrets]
-  C --> D[Tree: staff, related, alerts, teams, meetings]
-  D --> E[Workbook: sessions, meetings, tasks, time]
+  C --> D[Held meetings and lapses]
+  D --> E[Billed time per day: workbook and calendar]
   E --> F{Recalculated and tied?}
   F -->|No| G[Fix and rebuild]
-  F -->|Yes| H[Branded HTML report]
+  F -->|Yes| H[Branded hours report]
   classDef source fill:#eef2ff,stroke:#1e3a8a,color:#0f172a;
   classDef gate fill:#fff7e6,stroke:#c97a12,color:#3d2600;
   classDef output fill:#eefaf0,stroke:#2f8f46,color:#12351d;

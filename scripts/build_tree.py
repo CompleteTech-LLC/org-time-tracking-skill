@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the org-comms-export tree from a flat text file.
+"""Build the org-time-tracking tree from a flat text file.
 
 Input line format (one record per line, UTF-8; blank lines and lines starting with # are ignored):
     YYYY-MM-DD|HH:MM|category|source|who|text

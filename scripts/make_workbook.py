@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the time-accounting workbook from an org-comms-export tree. Everything org- or user-specific comes from a
+"""Build the time-accounting workbook from an org-time-tracking tree. Everything org- or user-specific comes from a
 JSON config (see config.example.json); nothing is hard-coded here.
 
 Usage:
@@ -513,7 +513,7 @@ for r, (cat, cnt, each, tot, basis) in enumerate(rows, 2):
     wm.cell(row=r, column=6, value=basis).font = base
     wm.cell(row=r, column=4).number_format = "0"
     wm.cell(row=r, column=5).number_format = "0.0"
-wm.cell(row=7, column=1, value="Total time in communications (logged basis)").font = bold
+wm.cell(row=7, column=1, value="Total billed time (logged basis)").font = bold
 wm.cell(row=7, column=4, value="=SUM(D2:D6)").font = bold
 wm.cell(row=7, column=5, value="=D7/60").font = bold
 wm.cell(
@@ -864,9 +864,9 @@ ws0.column_dimensions["C"].width = 70
 eyebrow = BR.get("eyebrow", "")
 ws0["A1"] = eyebrow
 ws0["A1"].font = Font(name=F, size=9, bold=True, color=HDR_COLOR)
-ws0["A2"] = f"{ORG} communications, {START:%Y-%m-%d} to {END:%Y-%m-%d}"
+ws0["A2"] = f"{ORG} time tracking, {START:%Y-%m-%d} to {END:%Y-%m-%d}"
 ws0["A2"].font = Font(name=F, size=14, bold=True)
-ws0["A3"] = BR.get("tagline") or "Outlook, Teams and calendar export. Tab guide in column C."
+ws0["A3"] = BR.get("tagline") or "Billable time from Outlook, Teams and calendar evidence. Tab guide in column C."
 ws0["A3"].font = Font(name=F, size=10, italic=True, color=BR["light"]["ink-3"].lstrip("#"))
 if BR.get("logo_path"):
     try:
@@ -885,36 +885,39 @@ for _c, _h in enumerate(("Metric", "Value", "Where to look"), 1):
     _x.font = white
     _x.fill = HDR
 items = [
-    ("Email: staff", f'=COUNTIFS(Communications!C2:C{NC},"Email",Communications!D2:D{NC},"Staff")', "Communications tab"),
+    ("My billed time (h), logged basis", "='Time Spent'!E7", "Time Spent tab; Calendar View shows it per day"),
+    ("  same, best case (ignores the held rule) (h)", "='Time Spent'!E9", "Upper bound only"),
+    ("Days with an actual meeting (day minimum applies)", "='Time Spent'!B5", "Meetings tab: held meetings only"),
+    ("Teams sessions I took part in", "='Time Spent'!B2", "Teams Sessions tab; every message on Teams Messages"),
+    ("Emails I wrote or drafted", "='Time Spent'!B3", "Communications tab"),
+    ("Estimated task effort, likely (h)", f"=Tasks!I{NT + 1}", "Range on Tasks tab; estimates, not tracked time"),
+    ("Tasks identified", f"=COUNTA(Tasks!B2:B{max(NT, 2)})", "Tasks tab"),
+    ("  of which open or unknown status", f'=COUNTIFS(Tasks!F2:F{max(NT, 2)},"Open*")+COUNTIFS(Tasks!F2:F{max(NT, 2)},"Unknown*")', ""),
+    ("Evidence: email from the organization (staff)", f'=COUNTIFS(Communications!C2:C{NC},"Email",Communications!D2:D{NC},"Staff")', "Communications tab"),
     (
-        "Email: related (not from the domain)",
+        "Evidence: related email (not from the domain)",
         f'=COUNTIFS(Communications!C2:C{NC},"Email",Communications!D2:D{NC},"Related")',
         "Communications tab",
     ),
     (
-        "Email: automated alerts / system",
+        "Evidence: automated alerts / system mail",
         f'=COUNTIFS(Communications!C2:C{NC},"Email",Communications!D2:D{NC},"Alert / system")',
         "Alert Rollup tab by type and month",
     ),
-    ("Teams messages", f'=COUNTIFS(Communications!C2:C{NC},"Teams")', "Teams Messages tab"),
-    ("Teams messages written by me", f'=COUNTIFS(Communications!C2:C{NC},"Teams",Communications!H2:H{NC},"Author")', ""),
-    ("Tasks identified", f"=COUNTA(Tasks!B2:B{max(NT, 2)})", "Tasks tab"),
-    ("  of which open or unknown status", f'=COUNTIFS(Tasks!F2:F{max(NT, 2)},"Open*")+COUNTIFS(Tasks!F2:F{max(NT, 2)},"Unknown*")', ""),
-    ("Estimated task effort, likely (h)", f"=Tasks!I{NT + 1}", "Range on Tasks tab; estimates, not tracked time"),
-    ("My time in communications (h), logged basis", "='Time Spent'!E7", "Time Spent tab"),
-    ("  same, best case (ignores the held rule) (h)", "='Time Spent'!E9", "Upper bound only"),
+    ("Evidence: Teams messages", f'=COUNTIFS(Communications!C2:C{NC},"Teams")', "Teams Messages tab"),
+    ("Evidence: Teams messages written by me", f'=COUNTIFS(Communications!C2:C{NC},"Teams",Communications!H2:H{NC},"Author")', ""),
 ]
-for r, (a, f, n) in enumerate(items, S0):
-    ws0.cell(row=r, column=1, value=a).font = base
-    ws0.cell(row=r, column=2, value=f).font = bold
-    ws0.cell(row=r, column=3, value=n).font = base
-for r in (S0 + 7, S0 + 8, S0 + 9):
-    ws0.cell(row=r, column=2).number_format = "0.0"
+for r, (a_, f_, n_) in enumerate(items, S0):
+    ws0.cell(row=r, column=1, value=a_).font = base
+    ws0.cell(row=r, column=2, value=f_).font = bold
+    ws0.cell(row=r, column=3, value=n_).font = base
+    if "(h)" in a_:
+        ws0.cell(row=r, column=2).number_format = "0.0"
 ws0.cell(row=S0 + len(items) + 1, column=1, value="Notes").font = bold
 for r, n in enumerate(
     [
         f"Billing parameters (Time Spent tab): minimum per lapse {MIN_LAPSE} min, increment {INCREMENT} min, meeting-day minimum {DAY_MIN} min, assumed {EMAIL_ACTUAL} min per email. Yellow cells are inputs; all totals are formulas.",
-        "Email times are not captured, so email dates are day-level only.",
+        "Evidence rows (email, Teams) support the time figures above; email times are not captured, so email dates are day-level only.",
         "A meeting counts as held only if there was Teams conversation that day (rule parameter in the config).",
         "Secrets found in chats were redacted; rotate them if still live.",
     ],
@@ -922,6 +925,8 @@ for r, n in enumerate(
 ):
     ws0.cell(row=r, column=1, value=n).font = base
 
+ORDER = ["Summary", "Time Spent", "Calendar View", "Daily Time", "Day Detail", "Meetings", "Teams Sessions", "Teams Messages", "Tasks", "Communications", "Alert Rollup"]
+wb._sheets.sort(key=lambda w: ORDER.index(w.title) if w.title in ORDER else len(ORDER))
 footer = BR.get("footer") or ""
 for _ws in wb.worksheets:
     _ws.sheet_properties.tabColor = HDR_COLOR
@@ -929,4 +934,4 @@ for _ws in wb.worksheets:
         _ws.oddFooter.left.text = footer
     _ws.oddFooter.right.text = "Page &P of &N"
 wb.save(OUT)
-print(f"saved {OUT}: {len(comms)} comms rows, {len(sessions)} Teams sessions, {len(meet)} meeting rows, {len(TASK_ROWS)} tasks")
+print(f"saved {OUT}: {len(sessions)} Teams sessions, {len(meet)} meeting rows, {len(TASK_ROWS)} tasks, {len(comms)} evidence rows")

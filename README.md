@@ -1,23 +1,23 @@
 **CompleteTech LLC Skills** · [Start here](ONBOARDING.md) · [Agent instructions](SKILL.md) · [Branding](BRANDING.md) · [Skill library](https://github.com/CompleteTech-LLC/agentic-services-orchestrator-skill/blob/main/references/skill-family.md) · [Contributing](CONTRIBUTING.md)
 
-# Org Comms Export Skill
+# Org Time Tracking Skill
 
 <p align="center">
   <img src="assets/logo.png" alt="CompleteTech LLC logo" width="260">
 </p>
 
-A CompleteTech LLC skill that exports one organization's Outlook mail, Teams chats and calendar meetings from a start date into a redacted folder tree, an Excel time-accounting workbook and a self-contained branded HTML report.
+A CompleteTech LLC skill for tracking time spent with one organization. It turns the evidence in your Outlook mail, Teams chats and calendar into billable hours under your own rules, shows them per day on a calendar with clickable event detail, and keeps a redacted evidence tree and a branded HTML report behind them.
 
 ## About
 
-Part of the CompleteTech LLC skill library. It reads the operator's own signed-in Microsoft 365 web session through a browser, turns the evidence into month/day files, and documents it with the operator's own billing rules: a minimum per lapse, a billing increment, a meeting-day minimum and a held-meeting rule. Every organization, person, date, rule and brand value is a parameter; identity is neutral unless an approved one is chosen.
+Part of the CompleteTech LLC skill library. It reads the operator's own signed-in Microsoft 365 web session through a browser and answers one question: how much time was spent, on which days, and what is the evidence? Time is billed under the operator's own rules: a minimum per lapse, a billing increment, a meeting-day minimum and a held-meeting rule (a scheduled call counts only if there was Teams conversation that day). Every organization, person, date, rule and brand value is a parameter; identity is neutral unless an approved one is chosen.
 
 ## OpenClaw / ClawHub Metadata
 
-- Skill key: `org-comms-export`
+- Skill key: `org-time-tracking`
 - Version-ready metadata: `1.0.0`
-- Homepage: https://github.com/CompleteTech-LLC/org-comms-export-skill
-- README: https://github.com/CompleteTech-LLC/org-comms-export-skill#readme
+- Homepage: https://github.com/CompleteTech-LLC/org-time-tracking-skill
+- README: https://github.com/CompleteTech-LLC/org-time-tracking-skill#readme
 - Runtime binaries: `python3`
 - Python packages: `openpyxl==3.1.5`, `pyyaml==6.0.3` (optional logo embedding: `pillow==12.2.0`)
 - Windows only, optional: desktop Excel for `scripts/recalc_excel.ps1`
@@ -29,13 +29,13 @@ Source: [assets/diagrams/workflow.mmd](assets/diagrams/workflow.mmd).
 
 ```mermaid
 flowchart LR
-  A[Parameters and consent] --> B[Browser collection: mail, chats, calendar]
+  A[Billing rules and consent] --> B[Evidence: mail, chats, calendar]
   B --> C[Redact secrets]
-  C --> D[Tree: staff, related, alerts, teams, meetings]
-  D --> E[Workbook: sessions, meetings, tasks, time]
+  C --> D[Held meetings and lapses]
+  D --> E[Billed time per day: workbook and calendar]
   E --> F{Recalculated and tied?}
   F -->|No| G[Fix and rebuild]
-  F -->|Yes| H[Branded HTML report]
+  F -->|Yes| H[Branded hours report]
   classDef source fill:#eef2ff,stroke:#1e3a8a,color:#0f172a;
   classDef gate fill:#fff7e6,stroke:#c97a12,color:#3d2600;
   classDef output fill:#eefaf0,stroke:#2f8f46,color:#12351d;
@@ -48,17 +48,17 @@ flowchart LR
 
 | Capability | Details |
 |---|---|
-| Collection | Outlook search results, Teams chat messages and calendar events through small, parameterized browser scripts. |
-| Redaction | Passwords, tokens and keys are replaced before anything is written; extra patterns are configurable. |
-| Tree | `staff/`, `related/`, `alerts/`, `teams/`, `meetings/` by `YYYY-MM/DD.md`. |
-| Workbook | Communications, Teams sessions and messages, meetings, tasks with effort estimates, time spent, daily calendar and clickable event detail. All totals are formulas driven by the billing inputs. |
-| Meetings | Calendar plus Teams meeting cards; a call counts as held only when there was Teams conversation that day (rule is a parameter). |
-| Report | One self-contained HTML file with brand tokens in light and dark, a monthly heat calendar, meetings and tasks. |
+| Time accounting | Teams sessions, emails written and meetings become lapses billed with a minimum, a rounding increment and a meeting-day minimum, all set by parameters; totals are formulas. |
+| Daily view | Daily Time, a month-grid Calendar View and a Day Detail list: every minute traces to an event with a clickable source. |
+| Held meetings | Calendar plus Teams meeting cards; a call counts as held only when there was Teams conversation that day (the rule is a parameter), and borderline cases are listed for the operator. |
+| Effort estimates | Tasks with low/high/likely hours, marked as estimates and as requested or suggested. |
+| Evidence | Outlook search results, Teams messages and calendar events collected through small parameterized browser scripts into a redacted `staff/`, `related/`, `alerts/`, `teams/`, `meetings/` tree by `YYYY-MM/DD.md`. |
+| Report | One self-contained HTML file with hours first, brand tokens in light and dark, a monthly heat calendar, meetings and tasks. |
 | Branding | Neutral by default; the CompleteTech preset or the operator's own identity on request. |
 
 ## Contents
 
-- `SKILL.md` - operating instructions, consent table and the parameter table.
+- `SKILL.md` - operating instructions, consent table and the parameter table (time tracking first, evidence second).
 - `references/` - browser mechanics, meeting and billing semantics, workbook and report reference.
 - `scripts/` - `build_tree.py`, `make_workbook.py`, `build_report.py`, `branding.py`, browser collectors (`*.js`), `recalc_excel.ps1`, validators.
 - `templates/` - `config.example.json`, `meetings.example.json`, `tasks.example.json`, `branding.neutral.json`, `branding.completetech.json`.
@@ -69,7 +69,7 @@ flowchart LR
 ```bash
 pip install -r requirements.txt
 python3 tests/make_fixtures.py          # synthetic end-to-end run, prints ALL OK
-python3 scripts/build_tree.py --in lines.txt --out ./acme --start 2026-07-01 --tz "America/New_York"
+python3 scripts/build_tree.py --in lines.txt --out ./acme --start 2026-07-01 --tz "America/New_York"   # evidence tree
 python3 scripts/make_workbook.py --config config.json
 python3 scripts/build_report.py --config config.json --theme auto
 ```
