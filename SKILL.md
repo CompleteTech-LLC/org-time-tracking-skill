@@ -87,7 +87,7 @@ Resolve identity before rendering. An approved engagement brand takes precedence
 2. **Gather the evidence.** Collect Outlook mail, Teams chats and (optionally) calendar and meeting cards with the `scripts/*.js` collectors; mechanics in [references/browser-collection.md](references/browser-collection.md). Redact, write lines, run `python scripts/build_tree.py --in lines.txt --out <out>/<org> --start <start> --tz "<tz>"`. Line format: `YYYY-MM-DD|HH:MM|category|source|who|text`, where category is staff, related, alerts or teams, and `source` is the chat, the alert type, or "mail".
 3. **Decide what counts.** Write `meetings.json` (series and dates; explicit status only where chat or mail proves a cancellation or postponement), `tasks.json` (effort estimates) and `config.json`; rules in [references/meetings-and-billing.md](references/meetings-and-billing.md).
 4. **Compute the time.** `python scripts/make_workbook.py --config config.json`; recalculate (`scripts/recalc_excel.ps1` or LibreOffice) and check the Daily Time and Day Detail "ties" cells. Tabs in [references/workbook.md](references/workbook.md): Time Spent, Calendar View, Daily Time and Day Detail come first; the evidence tabs follow.
-5. **Present it.** Open the workbook for the operator; `python scripts/build_report.py --config config.json` renders the branded HTML report (needs the recalculated workbook).
+5. **Present it.** Open the workbook for the operator; `python scripts/build_report.py --config config.json` renders the branded HTML report with From / To date dropdowns (needs the recalculated workbook).
 6. **Report** (see the end of this file), including every borderline case that needs the operator's decision.
 
 ## Hard rules (learned the hard way)

@@ -82,31 +82,40 @@ def check(condition: bool, message: str) -> None:
 
 def stub_workbook(path: Path) -> None:
     """Values-only workbook with the layout build_report.py reads (no formulas, so cached values exist)."""
+    import datetime as dt
+
     wb = Workbook()
     s = wb.active
     s.title = "Summary"
-    s["A5"], s["B5"] = "Metric", "Value"
-    for i, (k, v) in enumerate([("Email: staff", 1), ("Teams messages", 12), ("My billed time (h), logged basis", 6.5)], 6):
-        s.cell(row=i, column=1, value=k)
-        s.cell(row=i, column=2, value=v)
     t = wb.create_sheet("Time Spent")
-    for r, (k, c, m) in enumerate([("Teams chat sessions", 3, 60), ("Emails written", 1, 15), ("Held meetings", 2, 80), ("Top-up", 2, 400),
-                                   ("Unconfirmed", 0, 0), ("Total", None, 555), ("Best", 4, 700), ("Best total", None, 900)], 2):
+    for r, (k, c, m) in enumerate(
+        [("Teams chat sessions", 3, 60), ("Emails written", 1, 15), ("Held meetings", 2, 80), ("Top-up", 2, 400),
+         ("Unconfirmed", 0, 0), ("Total", None, 555), ("Best", 4, 700), ("Best total", None, 900)], 2):
         t.cell(row=r, column=1, value=k)
         t.cell(row=r, column=2, value=c)
         t.cell(row=r, column=4, value=m)
     d = wb.create_sheet("Daily Time")
-    import datetime as dt
-    d.append(["Date", "Total (min)"])
-    d.append([dt.datetime(2026, 7, 1), 255])
-    d.append([dt.datetime(2026, 7, 6), 240])
+    d.append(["Date", "Day", "teams", "email", "meet", "topup", "unc", "Total (min)", "Total (h)", "",
+              "helper: meeting min (logged)", "helper: qualifying (logged)", "Top-up (logged)",
+              "helper: meeting min (best)", "helper: qualifying (best)", "Top-up (best)"])
+    for date, teams, email, meet_l, top_l, meet_b, top_b in (
+        (dt.datetime(2026, 7, 1), 30, 15, 0, 240, 0, 240), (dt.datetime(2026, 7, 6), 0, 0, 0, 240, 0, 240), (dt.datetime(2026, 7, 8), 0, 0, 0, 0, 0, 240)):
+        d.append([date, "", teams, email, meet_l, top_l, 0, teams + email + meet_l + top_l, "", "", meet_l, 1 if top_l else 0, top_l,
+                  meet_b, 1, top_b])
+    sess = wb.create_sheet("Teams Sessions")
+    sess.append(["Date", "Chat", "Start", "End", "Messages", "My messages"])
+    sess.append([dt.datetime(2026, 7, 1), "Riley (1:1)", None, None, 3, 1])
+    comms = wb.create_sheet("Communications")
+    comms.append(["Date", "Time", "Channel", "Category", "From", "Subject", "Text", "My involvement"])
+    comms.append([dt.datetime(2026, 7, 1), None, "Email", "Staff", "Riley", "Notes", "", "Recipient"])
+    comms.append([dt.datetime(2026, 7, 1), None, "Teams", "Chat", "Riley (1:1)", "Pat", "hi", "Author"])
     m_ = wb.create_sheet("Meetings")
     m_.append(["Date", "Meeting", "Group", "Status", "Teams actual (min)", "Evidence"])
     m_.append([dt.datetime(2026, 7, 1), "Weekly sync", "Northwind work", "Held (conversation that day)", None, "calendar"])
     m_.append([dt.datetime(2026, 7, 8), "Weekly sync", "Northwind work", "Not held (no conversation that day)", None, "rule"])
     k = wb.create_sheet("Tasks")
-    k.append(["#", "Task", "Status", "Est. low (h)", "Est. high (h)", "Est. likely (h)"])
-    k.append([1, "Fix tickets", "Open", 2, 4, 3])
+    k.append(["#", "Task", "Status", "Raised", "Est. low (h)", "Est. high (h)", "Est. likely (h)"])
+    k.append([1, "Fix tickets", "Open", dt.datetime(2026, 7, 1), 2, 4, 3])
     wb.save(path)
 
 
@@ -161,10 +170,23 @@ def main() -> int:
     run(str(ROOT / "scripts/build_report.py"), "--config", "report_n.json", "--out", "report_neutral.html", "--theme", "dark")
     page, neutral_page = (OUT / "report_brand.html").read_text(encoding="utf-8"), (OUT / "report_neutral.html").read_text(encoding="utf-8")
     check("Content-Security-Policy" in page and not re.search(r"""(?:src|href)\s*=\s*["']https?://""", page), "report is self-contained with a CSP")
+    script = re.search(r"<script>(.*?)</script>", page, re.S)
+    check(script is not None and page.count("<script") == 1, "report has exactly one inline script")
+    import base64
+    import hashlib
+
+    digest = base64.b64encode(hashlib.sha256(script.group(1).encode("utf-8")).digest()).decode("ascii")
+    check(f"script-src 'sha256-{digest}'" in page and "unsafe-eval" not in page, "CSP pins the inline script by SHA-256 and allows no eval")
+    check('id="from"' in page and 'id="to"' in page and 'id="month"' in page, "From / To / Quick range dropdowns are present")
+    node = shutil.which("node")
+    if node:
+        (OUT / "report_script.js").write_text(script.group(1), encoding="utf-8")
+        run_node = subprocess.run([node, "--check", str(OUT / "report_script.js")], capture_output=True, text=True)
+        check(run_node.returncode == 0, "report script passes a JavaScript syntax check")
     check("--accent:#1E3A8A" in page and "data:image/png;base64," in page and "COMPLETETECH LLC" in page, "branded report: accent, inlined logo, eyebrow")
     check("COMPLETETECH" not in neutral_page and "data:image" not in neutral_page and 'data-theme="dark"' in neutral_page,
           "neutral report: no company identity; theme override applied")
-    check("prefers-color-scheme:dark" in page and "Held (conversation that day)" in page and "Not held" in page, "light/dark tokens and meeting table rendered")
+    check("prefers-color-scheme:dark" in page and "Held (conversation that day)" in page and "Not held" in page, "light/dark tokens and meeting data embedded")
 
     for bad in ({"preset": "no-such-brand"}, {"preset": "neutral", "accent": "blue"}, {"preset": "neutral", "logo": "https://example.com/x.png"}):
         (OUT / "bad.json").write_text(json.dumps(config("bad", bad)), encoding="utf-8")

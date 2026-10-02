@@ -53,7 +53,7 @@ flowchart LR
 | Held meetings | Calendar plus Teams meeting cards; a call counts as held only when there was Teams conversation that day (the rule is a parameter), and borderline cases are listed for the operator. |
 | Effort estimates | Tasks with low/high/likely hours, marked as estimates and as requested or suggested. |
 | Evidence | Outlook search results, Teams messages and calendar events collected through small parameterized browser scripts into a redacted `staff/`, `related/`, `alerts/`, `teams/`, `meetings/` tree by `YYYY-MM/DD.md`. |
-| Report | One self-contained HTML file with hours first, brand tokens in light and dark, a monthly heat calendar, meetings and tasks. |
+| Report | One self-contained HTML file with hours first, brand tokens in light and dark, a monthly heat calendar, meetings and tasks, and From / To dropdowns (plus a quick month picker) that recompute every figure for the chosen range in the browser; `?from=YYYY-MM-DD&to=YYYY-MM-DD` preselects a range. |
 | Branding | Neutral by default; the CompleteTech preset or the operator's own identity on request. |
 
 ## Contents

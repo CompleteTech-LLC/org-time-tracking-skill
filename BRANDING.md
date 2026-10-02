@@ -27,7 +27,7 @@ These established library colors are a reference for the `completetech` preset:
 | Ink (`ink`, `ink-2`, `ink-3`) | `#0F172A`, `#1E293B`, `#64748B` | `#F1F5F9`, `#CBD5E1`, `#94A3B8` |
 | Border (`line`, `line-2`) | `#E2E8F0`, `#CBD5E1` | `#334155`, `#475569` |
 
-Theme: the HTML report carries both token sets and follows the reader's system (`style.theme` or `--theme` forces `light` or `dark`). Excel has no light/dark switch, so the workbook uses the light tokens: the accent colors table headers, tab colors and the calendar heat scale, and header text color is chosen for contrast. Yellow input cells stay yellow in every brand: it is a semantic convention (cells the operator may edit), not a theme color.
+Theme: the HTML report (with its From / To date filter) carries both token sets and follows the reader's system (`style.theme` or `--theme` forces `light` or `dark`). Excel has no light/dark switch, so the workbook uses the light tokens: the accent colors table headers, tab colors and the calendar heat scale, and header text color is chosen for contrast. Yellow input cells stay yellow in every brand: it is a semantic convention (cells the operator may edit), not a theme color.
 
 Keep specialist layouts: this skill's workbook and report differ from invoices, envelopes or certificates. Use the existing generator options and configuration documented in `SKILL.md` and `--help`; this document does not introduce a universal brand-import flag.
 
