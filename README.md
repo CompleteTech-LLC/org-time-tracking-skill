@@ -3,7 +3,10 @@
 # Org Time Tracking Skill
 
 <p align="center">
-  <img src="assets/logo.png" alt="CompleteTech LLC logo" width="260">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.png">
+    <img src="assets/logo.png" alt="CompleteTech LLC logo" width="260">
+  </picture>
 </p>
 
 A CompleteTech LLC skill for accounting for time spent with one organization. It turns the evidence in your Outlook mail, Teams chats and calendar into hours under your own billing rules (estimates for your decision, not authority to bill), shows them per day on a calendar with clickable event detail, and keeps a redacted evidence tree and a branded HTML report behind them.
